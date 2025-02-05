@@ -1,0 +1,5 @@
+streamlit
+pymupdf  # For PDF extraction
+docx  # For DOCX file handling
+python-pptx  # For PPTX file extraction
+google-generativeai  # For Gemini API integration
