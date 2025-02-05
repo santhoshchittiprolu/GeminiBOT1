@@ -6,7 +6,7 @@ import docx
 from pptx import Presentation
 
 # Configure Gemini
-GOOGLE_API_KEY = os.getenv("GEMINI_API_KEY")
+GOOGLE_API_KEY = os.getenv("AIzaSyDzboVyiU1vAuXkfzF6C5XsUMj1E2M1eDM")
 if not GOOGLE_API_KEY:
     st.error("Please set the GEMINI_API_KEY environment variable.")
     st.stop()
