@@ -57,8 +57,10 @@ if user_input:
     # Generate response
     try:
         response = st.session_state.chat.send_message(full_query)
+        assistant_reply = response.text  # FIX: Extract text properly
+
         with st.chat_message("assistant"):
-            st.markdown(response.candidates[0].text if response.candidates else "(No response)")
+            st.markdown(assistant_reply)
     except Exception as e:
         st.error(f"🚨 Error generating response: {str(e)}")
 
