@@ -1,16 +1,8 @@
 import streamlit as st
 import google.generativeai as genai
 import os
-import fitz  # PyMuPDF for PDFs
-import docx
-from pptx import Presentation
 
 # Configure Gemini
-#GOOGLE_API_KEY = os.getenv("")
-#if not GOOGLE_API_KEY:
-#    st.error("Please set the GEMINI_API_KEY environment variable.")
-#    st.stop()
-
 genai.configure(api_key="AIzaSyDzboVyiU1vAuXkfzF6C5XsUMj1E2M1eDM")
 
 # Initialize the model
@@ -19,48 +11,34 @@ model = genai.GenerativeModel('gemini-1.5-pro-latest')
 # Initialize session state
 if "chat" not in st.session_state:
     st.session_state.chat = model.start_chat(history=[])
-if "uploaded_files" not in st.session_state:
-    st.session_state.uploaded_files = []
 if "file_texts" not in st.session_state:
     st.session_state.file_texts = ""
 
 st.title("📚 Lecture Files Chat Assistant")
-st.markdown("Upload your lecture files and chat with them using Gemini 1.5 Pro!")
+st.markdown("Automatically loads all lecture files from the project folder!")
 
-# Function to extract text from files
-def extract_text(file):
-    if file.type == "application/pdf":
-        doc = fitz.open(stream=file.read(), filetype="pdf")
-        return "\n".join([page.get_text("text") for page in doc])
-    elif file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":  # DOCX
-        doc = docx.Document(file)
-        return "\n".join([para.text for para in doc.paragraphs])
-    elif file.type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":  # PPTX
-        prs = Presentation(file)
-        return "\n".join([slide.shapes.title.text for slide in prs.slides if slide.shapes.title])
-    elif file.type == "text/plain":
-        return file.read().decode("utf-8")
-    return ""
+# Function to read text from all .txt files in the repository folder
+def read_all_txt_files(folder_path):
+    combined_text = ""
+    try:
+        for filename in os.listdir(folder_path):
+            if filename.endswith(".txt"):  # Process only text files
+                file_path = os.path.join(folder_path, filename)
+                with open(file_path, "r", encoding="utf-8") as file:
+                    combined_text += f"\n\n--- {filename} ---\n" + file.read()
+        return combined_text
+    except Exception as e:
+        st.error(f"Error reading files: {e}")
+        return ""
 
-# File upload section
-with st.sidebar:
-    st.header("📁 Upload Files")
-    uploaded_files = st.file_uploader(
-        "Choose lecture files (PDF, TXT, PPTX, DOCX)",
-        type=['pdf', 'txt', 'pptx', 'docx'],
-        accept_multiple_files=True
-    )
-    
-    if uploaded_files:
-        st.session_state.file_texts = ""
-        for file in uploaded_files:
-            extracted_text = extract_text(file)
-            st.session_state.file_texts += f"\n\n--- {file.name} ---\n" + extracted_text
-        st.success(f"✅ Uploaded {len(uploaded_files)} files!")
+# Read all text files in the current folder
+FOLDER_PATH = "."  # Set to current directory
+st.session_state.file_texts = read_all_txt_files(FOLDER_PATH)
 
-    if st.session_state.file_texts:
-        st.subheader("Uploaded Files Content Preview")
-        st.text_area("Extracted Text", st.session_state.file_texts[:1000] + "...", height=200)
+# Display the extracted content
+if st.session_state.file_texts:
+    st.subheader("Loaded Lecture Notes")
+    st.text_area("Extracted Text", st.session_state.file_texts[:1000] + "...", height=200)
 
 # Chat interface
 for message in st.session_state.chat.history:
@@ -84,7 +62,7 @@ if user_input:
     except Exception as e:
         st.error(f"🚨 Error generating response: {str(e)}")
 
-# Add some styling
+# Styling
 st.markdown("""
 <style>
     .stChatInput textarea {
