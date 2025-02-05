@@ -6,12 +6,12 @@ import docx
 from pptx import Presentation
 
 # Configure Gemini
-GOOGLE_API_KEY = os.getenv("AIzaSyDzboVyiU1vAuXkfzF6C5XsUMj1E2M1eDM")
-if not GOOGLE_API_KEY:
-    st.error("Please set the GEMINI_API_KEY environment variable.")
-    st.stop()
+#GOOGLE_API_KEY = os.getenv("")
+#if not GOOGLE_API_KEY:
+#    st.error("Please set the GEMINI_API_KEY environment variable.")
+#    st.stop()
 
-genai.configure(api_key=GOOGLE_API_KEY)
+genai.configure(api_key="AIzaSyDzboVyiU1vAuXkfzF6C5XsUMj1E2M1eDM")
 
 # Initialize the model
 model = genai.GenerativeModel('gemini-1.5-pro-latest')
