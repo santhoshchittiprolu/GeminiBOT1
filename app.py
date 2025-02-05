@@ -36,9 +36,9 @@ FOLDER_PATH = "."  # Set to current directory
 st.session_state.file_texts = read_all_txt_files(FOLDER_PATH)
 
 # Display the extracted content
-if st.session_state.file_texts:
-    st.subheader("Loaded Lecture Notes")
-    st.text_area("Extracted Text", st.session_state.file_texts[:1000] + "...", height=200)
+#if st.session_state.file_texts:
+#    st.subheader("Loaded Lecture Notes")
+#    st.text_area("Extracted Text", st.session_state.file_texts[:1000] + "...", height=200)
 
 # Chat interface
 for message in st.session_state.chat.history:
